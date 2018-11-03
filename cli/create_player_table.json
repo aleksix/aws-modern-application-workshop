@@ -1,0 +1,23 @@
+{
+  "TableName": "MysfitsPlayers",
+  "ProvisionedThroughput": {
+    "ReadCapacityUnits": 5,
+    "WriteCapacityUnits": 5
+  },
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "playerId",
+      "AttributeType": "N"
+    },
+    {
+      "AttributeName": "money",
+      "AttributeType": "N"
+    }
+  ],
+  "KeySchema": [
+    {
+      "AttributeName": "PlayerId",
+      "KeyType": "HASH"
+    }
+  ]
+}

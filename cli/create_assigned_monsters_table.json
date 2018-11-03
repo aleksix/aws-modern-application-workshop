@@ -1,0 +1,39 @@
+{
+  "TableName": "MysfitsMonsters",
+  "ProvisionedThroughput": {
+    "ReadCapacityUnits": 5,
+    "WriteCapacityUnits": 5
+  },
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "monsterId",
+      "AttributeType": "N"
+    },
+    {
+      "AttributeName": "masterId",
+      "AttributeType": "N"
+    },
+    {
+      "AttributeName": "health",
+      "AttributeType": "N"
+    },
+    {
+      "AttributeName": "food",
+      "AttributeType": "N"
+    },
+    {
+      "AttributeName": "entertainment",
+      "AttributeType": "N"
+    }
+  ],
+  "KeySchema": [
+    {
+      "AttributeName": "MonsterId",
+      "KeyType": "HASH"
+    },
+    {
+      "AttributeName": "MasterId",
+      "KeyType": "RANGE"
+    }
+  ]
+}
