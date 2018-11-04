@@ -1,8 +1,13 @@
 from collections import defaultdict
-
+from boto3.dynamodb.conditions import Key, Attr
 import boto3
 
 client = boto3.client("dynamodb")
+
+dynamodb = boto3.resource("dynamodb")
+
+players = dynamodb.Table("MysfitsPlayers")
+monsters = dynamodb.Table("MysfitsMonsters")
 
 
 def playerJsonToDict(items):
@@ -38,31 +43,35 @@ def mysfitJsonToDict(items):
 
 
 def getPlayers():
-    response = client.scan(
-        TableName="MysfitsPlayers"
-    )
+    response = players.scan()
 
     return playerJsonToDict(response["Items"])
 
 
 def getAllMonsters():
-    response = client.scan(
-        TableName="MysfitsMonsters"
-    )
+    response = monsters.scan()
 
     return mysfitJsonToDict(response["Items"])
 
 
 def getPlayerByID(id):
-    response = client.query(
-        TableName="MysfitsPlayers",
-        KeyConditions={"playerId": {"AttributeValueList": [{"N": id}],
-                                    "ComparisonOperator": "EQ"}
-                       }
-    )
+    response = players.get_item(Key={"playerId": id})
 
-    return playerJsonToDict(response["Items"])
+    return playerJsonToDict(response["Item"])
+
+
+def getPlayersMonsters(masterId):
+    response = monsters.query(KeyConditionExpression=Key("masterId").eq(masterId))
+
+    return mysfitJsonToDict(response["Items"])
 
 
 def getMonsterByID(id, masterId):
+    response = monsters.get_item(Key={"masterId": masterId, "monsterId": id})
+
+    return mysfitJsonToDict(response["Item"])
+
+
+if __name__ == "__main__":
+    # Testing code
     pass
