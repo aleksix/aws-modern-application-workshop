@@ -7,11 +7,11 @@
   "AttributeDefinitions": [
     {
       "AttributeName": "monsterId",
-      "AttributeType": "N"
+      "AttributeType": "S"
     },
     {
       "AttributeName": "masterId",
-      "AttributeType": "N"
+      "AttributeType": "S"
     },
     {
       "AttributeName": "health",
@@ -28,12 +28,12 @@
   ],
   "KeySchema": [
     {
-      "AttributeName": "MonsterId",
-      "KeyType": "RANGE"
-    },
-    {
       "AttributeName": "MasterId",
       "KeyType": "HASH"
+    },
+    {
+      "AttributeName": "MonsterId",
+      "KeyType": "RANGE"
     }
   ]
 }

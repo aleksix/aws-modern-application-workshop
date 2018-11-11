@@ -7,7 +7,7 @@
   "AttributeDefinitions": [
     {
       "AttributeName": "playerId",
-      "AttributeType": "N"
+      "AttributeType": "S"
     },
     {
       "AttributeName": "money",
