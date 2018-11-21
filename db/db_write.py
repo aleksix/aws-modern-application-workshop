@@ -1,5 +1,4 @@
 from db.db import players, owned_monsters
-from botocore.exceptions import ClientError
 
 
 def add_player(playerId, money=100):
