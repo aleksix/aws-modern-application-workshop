@@ -270,6 +270,28 @@
         },
 
       });
+
+      var sessionTokensString = localStorage.getItem('sessionTokens');
+      var sessionTokens = JSON.parse(sessionTokensString);
+      var IdToken = sessionTokens.IdToken;
+      var idJwt = IdToken.jwtToken;
+      var playerId = localStorage.getItem('userId')
+
+      var mysfitsApi = mysfitsApiEndpoint + '/mysfits/confirm';
+
+      $.ajax({
+          url : mysfitsApi,
+          async : false,
+          type : 'POST',
+          headers : {'Authorization' : idJwt, 'Content-Type' : 'application/json' },
+          data: JSON.stringify({'playerId' : playerId}),
+          error : function(response) {
+            console.log("could not confirm your registration");
+            if (response.status == "401") {
+               refreshAWSCredentials();
+             }
+          }
+        });
     }
 
     function refreshAWSCredentials() {

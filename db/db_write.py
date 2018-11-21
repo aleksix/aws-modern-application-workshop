@@ -3,6 +3,9 @@ from db.db import players, owned_monsters
 
 def add_player(playerId, money=100):
     # String set would make more sense, potentially, but I'm unsure if we can easily create it
+    playerData = players.get_item(Key={"playerId": playerId})
+    if "Item" in playerData:
+        return False
     players.put_item(Item={
         "playerId": playerId,
         "money": money,

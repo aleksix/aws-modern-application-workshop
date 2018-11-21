@@ -70,6 +70,17 @@ def adoptMysfit(mysfitId):
     return flaskResponse
 
 
+@app.route("/mysfits/confirm", methods=['POST'])
+def confirmPlayer(playerId):
+    playerId = request.get_json(silent=True)["playerId"]
+
+    serviceResponse = mysfitsTableClient.confirm(playerId)
+
+    flaskResponse = Response(serviceResponse)
+    flaskResponse.headers["Content-Type"] = "application/json"
+
+    return flaskResponse
+
 # Run the service on the local server it has been deployed to,
 # listening on port 8080.
 if __name__ == "__main__":

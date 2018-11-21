@@ -2,7 +2,7 @@ import boto3
 import json
 import logging
 from collections import defaultdict
-from db.db_write import add_monster
+from db.db_write import add_monster, add_player
 
 # create a DynamoDB client using boto3. The boto3 library will automatically
 # use the credentials associated with our ECS task role to communicate with
@@ -133,7 +133,18 @@ def likeMysfit(mysfitId):
 
 # assign a mysfit to a player
 def adoptMysfit(mysfitId, playerId):
-    add_monster(playerId, mysfitId)
+    result = add_monster(playerId, mysfitId)
+
+    response = {}
+    response["Update"] = "Failure"
+    if result:
+        response["Update"] = "Success";
+
+    return json.dumps(response)
+
+
+def confirmPlayer(playerId):
+    add_player(playerId)
 
     response = {}
     response["Update"] = "Success";
