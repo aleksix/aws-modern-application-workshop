@@ -1,4 +1,5 @@
-from db.db import players, monsters
+from db.db import players, owned_monsters
+from botocore.exceptions import ClientError
 
 
 def add_player(playerId, money=100):
@@ -8,11 +9,20 @@ def add_player(playerId, money=100):
         "money": money,
         "owned_monsters": list()
     })
+    return True
 
 
 def add_monster(playerId, monsterId, health=100, food=100, entertainment=100):
-    monsters.put_item(Item={"masterId": playerId,
-                            "monsterId": monsterId,
-                            "health": health,
-                            "food": food,
-                            "entertainment": entertainment})
+    playerData = players.get_item(Key={"playerId": playerId})
+    if "Item" not in playerData:
+        return False
+    owned_monsters.put_item(Item={"masterId": playerId,
+                                  "monsterId": monsterId,
+                                  "health": health,
+                                  "food": food,
+                                  "entertainment": entertainment})
+    players.update_item(Key={"playerId": playerId},
+                        AttributeUpdates={
+                            "owned_monsters": {"Value": list(monsterId),
+                                               "Action": "ADD"}})
+    return True

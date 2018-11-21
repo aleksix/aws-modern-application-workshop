@@ -7,7 +7,7 @@ client = boto3.client("dynamodb")
 dynamodb = boto3.resource("dynamodb")
 
 players = dynamodb.Table("MysfitsPlayers")
-monsters = dynamodb.Table("MysfitsMonsters")
+owned_monsters = dynamodb.Table("MysfitsMonsters")
 
 
 def playerJsonToDict(items):
@@ -49,7 +49,7 @@ def getPlayers():
 
 
 def getAllMonsters():
-    response = monsters.scan()
+    response = owned_monsters.scan()
 
     return mysfitJsonToDict(response["Items"])
 
@@ -61,13 +61,13 @@ def getPlayerByID(id):
 
 
 def getPlayersMonsters(masterId):
-    response = monsters.query(KeyConditionExpression=Key("masterId").eq(masterId))
+    response = owned_monsters.query(KeyConditionExpression=Key("masterId").eq(masterId))
 
     return mysfitJsonToDict(response["Items"])
 
 
 def getMonsterByID(id, masterId):
-    response = monsters.get_item(Key={"masterId": masterId, "monsterId": id})
+    response = owned_monsters.get_item(Key={"masterId": masterId, "monsterId": id})
 
     return mysfitJsonToDict(response["Item"])
 
