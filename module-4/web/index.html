@@ -75,6 +75,14 @@
           <li class="nav-item " >
             <button type="button" class="btn btn-success" ng-click="removeFilter()">View All</button>
           </li>
+          <div>
+            <table>
+              <tr>
+                <td><b>       Your money: </b></td>
+                <td id='moneymain'>'{money}'</td>
+              </tr>
+            </table>
+          </div>
         </ul>
       </div>
     </div>
@@ -119,10 +127,25 @@
           </div>
         <!-- Modal Body -->
           <div class="modal-body">
-            <div><b>Level:</b></div>
+            <div>
+              <table>
+                <tr>
+                  <td><b>Your money: </b></td>
+                  <td id='money'>'{money}'</td>
+                </tr>
+              </table>
+            </div>
+              <div>
+              <table>
+                <tr>
+                  <td><b>Level: </b></td>
+                  <td id='level'>'{level}'</td>
+                </tr>
+              </table>
+            </div>
             <div class="progress">
-              <div id='semen' class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-               '${semen}'
+              <div id='exp' class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+               '${exp}'
               </div>
             </div>
             <div><b>Happiness:</b></div>
@@ -142,7 +165,11 @@
               <div id='hunger' class="progress-bar bg-warning progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100">
                 '${hunger}'
               </div>
-            </div>            
+            </div>        
+            </p>
+            <button type="button" id = 'play' class="btn btn-primary">Play</button>
+            <button type="button" id = 'heal' class="btn btn-primary">Heal</button>
+            <button type="button" id = 'feed' class="btn btn-primary">Feed</button>
             <p align="center">
               <img id="profileImage" src="{{profileMysfit.profileImageUri}}" align="center" />
             </p>
@@ -173,10 +200,11 @@
   </body>
   <script>
 
-    var semen = 100;
+    var exp = 100;
     var happiness = 100;
     var health = 100;
     var hunger = 100;
+    var money = 12323;
     
     var mysfitsApiEndpoint = 'https://wndfa4szij.execute-api.us-east-2.amazonaws.com/prod'; // example: 'https://abcd12345.execute-api.us-east-1.amazonaws.com/prod'
     var cognitoUserPoolId = 'us-east-2_Ycl7duwMK';  // example: 'us-east-1_abcd12345'
@@ -192,14 +220,18 @@
     var profileScope;
     
 
-    document.getElementById('semen').innerHTML = semen;
-    document.getElementById('semen').style.width = `${semen}%`;
+    document.getElementById('exp').innerHTML = exp;  //to non-constant
+    document.getElementById('money').innerHTML = money;
+    document.getElementById('moneymain').innerHTML = money;
+    document.getElementById('exp').style.width = `${exp%10*10}%`;
+    document.getElementById('level').innerHTML = Math.floor(exp/10);
     document.getElementById('happiness').innerHTML = happiness;
     document.getElementById('happiness').style.width = `${happiness}%`;
     document.getElementById('health').innerHTML = health;
     document.getElementById('health').style.width = `${health}%`;
     document.getElementById('hunger').innerHTML = hunger;
     document.getElementById('hunger').style.width = `${hunger}%`;
+    
     
     initializeStorage();
 
@@ -228,7 +260,24 @@
       localStorage.setItem('loginPrefix', loginPrefix);
     }
 
+  $(document).on('click', '#play', function(event) {
+    happiness++;
+      document.getElementById('happiness').innerHTML = happiness;
+      document.getElementById('happiness').style.width = `${happiness}%`;
+  });
 
+  $(document).on('click', '#heal', function(event) {
+    health++;
+      document.getElementById('health').innerHTML = health;
+      document.getElementById('health').style.width = `${health}%`;
+  });
+
+  $(document).on('click', '#feed', function(event) {
+    hunger++;
+      document.getElementById('hunger').innerHTML = hunger;
+      document.getElementById('hunger').style.width = `${hunger}%`;
+  });
+  
   $(document).on('click', '#logOutButton', function(event) {
     localStorage.clear();
     document.location.reload();
@@ -351,19 +400,24 @@
             });
         }
 
-    function refresh() {
-      semen-=1;
-      happiness-=2;
-      health-=3;
-      hunger-=4;
-      document.getElementById('semen').innerHTML = semen;
-      document.getElementById('semen').style.width = `${semen}%`;
+    function refresh() { //refreshing every 5 seconds
+      exp -= 0;
+      happiness -= 2;
+      health -= 3;
+      hunger -= 4;
+      happiness = Math.max(happiness,0);
+      health = Math.max(health,0);
+      hunger = Math.max(hunger,0);
+      document.getElementById('exp').innerHTML = exp;
+      document.getElementById('exp').style.width = `${exp%10*10}%`;
+      document.getElementById('level').innerHTML = exp/10;
       document.getElementById('happiness').innerHTML = happiness;
       document.getElementById('happiness').style.width = `${happiness}%`;
       document.getElementById('health').innerHTML = health;
       document.getElementById('health').style.width = `${health}%`;
       document.getElementById('hunger').innerHTML = hunger;
       document.getElementById('hunger').style.width = `${hunger}%`;
+      document.getElementById('level').innerHTML = Math.floor(exp/10);
       setTimeout(refresh, 5000);
     }  
     setTimeout(refresh,5000);
