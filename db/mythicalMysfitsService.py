@@ -119,9 +119,3 @@ def retrieve():
 # listening on port 8080.
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
-
-# TODO: Add cost to adoption
-# Cost will be passed in the POST body
-# If the player has the money, deduct and adopt
-# If can't adopt (already has one), return error
-# If can't adopt (no money to buy), return error

@@ -5,16 +5,19 @@ from datetime import datetime
 def add_player(playerId, money=100):
     # String set would make more sense, potentially, but I'm unsure if we can easily create it
     playerData = players.get_item(Key={"playerId": playerId})
-    if "Item" in playerData:
-        return False
-
     lastLogin = datetime.utcnow().isoformat()
-    players.put_item(Item={
-        "playerId": playerId,
-        "money": money,
-        "ownedMonsters": list(),
-        "lastLogin": lastLogin
-    })
+    if "Item" in playerData:
+        players.update_item(Key={"playerId": playerId},
+                            AttributeUpdates={
+                                "lastLogin": {"Value": lastLogin,
+                                              "Action": "PUT"}})
+    else:
+        players.put_item(Item={
+            "playerId": playerId,
+            "money": money,
+            "ownedMonsters": list(),
+            "lastLogin": lastLogin
+        })
     return True
 
 
@@ -28,7 +31,7 @@ def add_monster(playerId, monsterId, food=100, entertainment=100, level=1):
                                   "food": food,
                                   "entertainment": entertainment,
                                   "level": level})
-    
+
     players.update_item(Key={"playerId": playerId},
                         AttributeUpdates={
                             "ownedMonsters": {"Value": list(monsterId),
