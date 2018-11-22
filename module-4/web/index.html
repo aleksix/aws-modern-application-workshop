@@ -144,14 +144,14 @@
               </table>
             </div>
             <div class="progress">
-              <div id='exp' class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-               '${exp}'
+              <div id='score' class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+               '${score}'
               </div>
             </div>
             <div><b>Happiness:</b></div>
             <div class="progress">
-              <div id='happiness' class="progress-bar bg-info progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                '${happiness}'
+              <div id='happy' class="progress-bar bg-info progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                '${happy}'
               </div>
             </div>
             <div><b>Health:</b></div>
@@ -167,9 +167,13 @@
               </div>
             </div>        
             </p>
-            <button type="button" id = 'play' class="btn btn-primary">Play</button>
-            <button type="button" id = 'heal' class="btn btn-primary">Heal</button>
-            <button type="button" id = 'feed' class="btn btn-primary">Feed</button>
+            <button type="button" id = 'water' class="btn btn-primary">Water</button>
+            <button type="button" id = 'snack' class="btn btn-primary">Snack</button>
+            <button type="button" id = 'food' class="btn btn-primary">Food</button>
+            <p></p>
+            <button type="button" id = 'talk' class="btn btn-primary">Talk</button>
+            <button type="button" id = 'ball' class="btn btn-primary">Ball</button>
+            <button type="button" id = 'music' class="btn btn-primary">Music</button>
             <p align="center">
               <img id="profileImage" src="{{profileMysfit.profileImageUri}}" align="center" />
             </p>
@@ -199,12 +203,193 @@
     </p>
   </body>
   <script>
+    var score;
+    var money;
+    var health;
+    var happy;
+    var hunger;
+    // main
+    getValue(init);
+     function init(response)
+    {
+    	old_date = response.lastLogin;
+    	date = (new Date().getTime() - old_date)/6000;
+    	hunger = response.food + date;
+    	happy = response.entertainment + date;
+    	score = response.level;
+    	money = response.money;
+    	call_health();
+    	timer();
+    	save_timer();
+    }
+    function is_alive(){
+    	if (happy > 0 && hunger >0)
+    		return true;
+    	else{
+    		health = 0;
+    		happy = 0;
+    		return false;
+    		}
+    }
+     document.getElementById('score').innerHTML = score;  //to non-constant
+    document.getElementById('money').innerHTML = money;
+    document.getElementById('moneymain').innerHTML = money;
+    document.getElementById('score').style.width = `${score%10*10}%`;
+    document.getElementById('level').innerHTML = lvl();
+    document.getElementById('happy').innerHTML = happy;
+    document.getElementById('happy').style.width = `${happy}%`;
+    document.getElementById('health').innerHTML = health;
+    document.getElementById('health').style.width = `${health}%`;
+    document.getElementById('hunger').innerHTML = hunger;
+    document.getElementById('hunger').style.width = `${hunger}%`;   
+    function refresh() {
+      document.getElementById('score').innerHTML = score;
+      document.getElementById('score').style.width = `${score%10*10}%`;
+      document.getElementById('level').innerHTML = lvl();
+      document.getElementById('happy').innerHTML = happy;
+      document.getElementById('happy').style.width = `${happy}%`;
+      document.getElementById('health').innerHTML = health;
+      document.getElementById('health').style.width = `${health}%`;
+      document.getElementById('hunger').innerHTML = hunger;
+      document.getElementById('hunger').style.width = `${hunger}%`;
+    }  
+    function lvl(){
+    	return Math.floor(score/10);
+    }
+    function max_val(){
+    	return 99 + lvl/10;	
+    }
+    function call_health(){
+    	if (!is_alive)
+    		return 0;
+    	if ((happy + hunger)/2 < max_val)
+    		return (happy + hunger)/2;
+    	else
+    		return max_val;
+    }
+     // mechanic
+    function all_down(){
+    	if(happy>0)
+    		happy--;
+    	if(hunger>0)
+    		hunger--;
+    	health = call_health;
+      refresh();
+      
+    }
+    function up_hunger(value){
+    	hunger += value;
+    	if (hunger > max_hunger)
+    		hunger = max_val;
+    	health = call_health;
+      refresh();
+    }
+    function up_happy(value){
+    	happy += value;
+    	if (happy > max_val)
+    		happy = max_val;
+    	health = call_health;	
+      refresh();
+    }
+    function up_score(){
+    	if (score%10 == 9)
+    		lvl_up();
+    	score++;
+      refresh();
+    }
+    function lvl_up(){
+    	money +=10;
+      refresh();
+    }
+     // button interatcion
+    function food(name){
+    	if (name == "food")
+    		up_hunger(10);
+    	if (name == "snack")
+    		up_hunger(5);
+    	if (name == "water")
+    		up_hunger(2);
+    	POST(hunger)
+    }
+    function fun(name){
+    	if (name == "music")
+    		up_happy(10);
+    	if (name == "ball")
+    		up_happy(7);
+    	if (name == "talk")
+    		up_happy(4);
+    	POST(happy)
+    }
 
-    var exp = 100;
-    var happiness = 100;
-    var health = 100;
-    var hunger = 100;
-    var money = 12323;
+  $(document).on('click', '#Water', function(event) {
+    up_hunger(2);
+  });
+
+  $(document).on('click', '#water', function(event) {
+    up_hunger(5);
+  });
+
+  $(document).on('click', '#water', function(event) {
+    up_hunger(10);
+  });
+
+  $(document).on('click', '#heal', function(event) {
+    up_happy(4);
+  });
+
+  $(document).on('click', '#heal', function(event) {
+    up_happy(7);
+  });
+
+  $(document).on('click', '#heal', function(event) {
+    up_happy(10);
+  });
+
+
+   //Timer
+     function timer(){
+    	all_down;
+    	up_score();
+    	setTimeout(timer, 6*1000);
+    }
+     function save_timer(){
+    	all_down;
+    	post;
+    	setTimeout(save_timer, 300*1000);
+    }
+      
+     function post(){
+     $.ajax({
+              url : mysfitsApi,
+              async : false,
+              type : 'POST',
+              headers : {'Authorization' : idJwt, 'Content-Type' : 'application/json' },
+              data: JSON.stringify({'playerId' : playerId, 'money' : money, 'lastLogin':newDate(), 'food': hunger, 'entertainment': happy, 'level': score}),
+              error : function(response) {
+                console.log("could not send data.");
+                if (response.status == "401") {
+                   refreshAWSCredentials();
+                 }
+              }
+            });
+            }
+    var mysfitsApi = mysfitsApiEndpoint + '/mysfits/';
+     function getValue(callback) {
+     $.ajax({
+       
+            url : mysfitsApi,
+            type : 'GET',
+            success : function(response) {
+              callback(response);
+            },
+            error : function(response) {
+              console.log("could not get data.");
+              if (response.status == "401") {
+                 refreshAWSCredentials();
+               }
+            }
+          });
+    }
     
     var mysfitsApiEndpoint = 'https://wndfa4szij.execute-api.us-east-2.amazonaws.com/prod'; // example: 'https://abcd12345.execute-api.us-east-1.amazonaws.com/prod'
     var cognitoUserPoolId = 'us-east-2_Ycl7duwMK';  // example: 'us-east-1_abcd12345'
@@ -220,17 +405,7 @@
     var profileScope;
     
 
-    document.getElementById('exp').innerHTML = exp;  //to non-constant
-    document.getElementById('money').innerHTML = money;
-    document.getElementById('moneymain').innerHTML = money;
-    document.getElementById('exp').style.width = `${exp%10*10}%`;
-    document.getElementById('level').innerHTML = Math.floor(exp/10);
-    document.getElementById('happiness').innerHTML = happiness;
-    document.getElementById('happiness').style.width = `${happiness}%`;
-    document.getElementById('health').innerHTML = health;
-    document.getElementById('health').style.width = `${health}%`;
-    document.getElementById('hunger').innerHTML = hunger;
-    document.getElementById('hunger').style.width = `${hunger}%`;
+
     
     
     initializeStorage();
@@ -260,23 +435,6 @@
       localStorage.setItem('loginPrefix', loginPrefix);
     }
 
-  $(document).on('click', '#play', function(event) {
-    happiness++;
-      document.getElementById('happiness').innerHTML = happiness;
-      document.getElementById('happiness').style.width = `${happiness}%`;
-  });
-
-  $(document).on('click', '#heal', function(event) {
-    health++;
-      document.getElementById('health').innerHTML = health;
-      document.getElementById('health').style.width = `${health}%`;
-  });
-
-  $(document).on('click', '#feed', function(event) {
-    hunger++;
-      document.getElementById('hunger').innerHTML = hunger;
-      document.getElementById('hunger').style.width = `${hunger}%`;
-  });
   
   $(document).on('click', '#logOutButton', function(event) {
     localStorage.clear();
@@ -400,29 +558,6 @@
             });
         }
 
-    function refresh() { //refreshing every 5 seconds
-      exp -= 0;
-      happiness -= 2;
-      health -= 3;
-      hunger -= 4;
-      happiness = Math.max(happiness,0);
-      health = Math.max(health,0);
-      hunger = Math.max(hunger,0);
-      document.getElementById('exp').innerHTML = exp;
-      document.getElementById('exp').style.width = `${exp%10*10}%`;
-      document.getElementById('level').innerHTML = exp/10;
-      document.getElementById('happiness').innerHTML = happiness;
-      document.getElementById('happiness').style.width = `${happiness}%`;
-      document.getElementById('health').innerHTML = health;
-      document.getElementById('health').style.width = `${health}%`;
-      document.getElementById('hunger').innerHTML = hunger;
-      document.getElementById('hunger').style.width = `${hunger}%`;
-      document.getElementById('level').innerHTML = Math.floor(exp/10);
-      setTimeout(refresh, 5000);
-    }  
-    setTimeout(refresh,5000);
-    
-
     }
 
     $("#loginForm").submit(function(event) {
@@ -475,6 +610,7 @@
            var mysfitsApi = mysfitsApiEndpoint + '/mysfits?' + 'filter=' + filterCategoryQS + "&value=" + filterValue;
 
            $.ajax({
+             
              url : mysfitsApi,
              type : 'GET',
              success : function(response) {
