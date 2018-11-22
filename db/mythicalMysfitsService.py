@@ -60,9 +60,11 @@ def likeMysfit(mysfitId):
 # indicate that the provided mysfit should be marked as adopted.
 @app.route("/mysfits/<mysfitId>/adopt", methods=['POST'])
 def adoptMysfit(mysfitId):
-    playerId = request.get_json(silent=True)["playerId"]
+    json_body = request.get_json(silent=True)
+    playerId = json_body["playerId"]
+    cost = json_body["cost"]
 
-    serviceResponse = mysfitsTableClient.adoptMysfit(mysfitId, playerId)
+    serviceResponse = mysfitsTableClient.adoptMysfit(mysfitId, playerId, cost)
 
     flaskResponse = Response(serviceResponse)
     flaskResponse.headers["Content-Type"] = "application/json"
@@ -117,10 +119,6 @@ def retrieve():
 # listening on port 8080.
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
-
-# TODO : Save and retrieve player data
-# Save - gets data from POST body and updates lastLogin with current server time
-# Retrieve - returns a json with player id? lastLogin and data on all owned monsters
 
 # TODO: Add cost to adoption
 # Cost will be passed in the POST body

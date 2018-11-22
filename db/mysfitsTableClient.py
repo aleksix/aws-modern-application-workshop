@@ -134,13 +134,28 @@ def likeMysfit(mysfitId):
 
 
 # assign a mysfit to a player
-def adoptMysfit(mysfitId, playerId):
-    result = add_monster(playerId, mysfitId)
-
+def adoptMysfit(mysfitId, playerId, cost):
     response = {}
     response["Update"] = "Failure"
-    if result:
-        response["Update"] = "Success";
+
+    money = db.db.getPlayerByID(playerId)["players"][0]["money"]
+
+    result = (money < cost)
+
+    if not result:
+        return json.dumps(response)
+
+    result = add_monster(playerId, mysfitId)
+
+    if not result:
+        return json.dumps(response)
+
+    db.db.players.update_item(Key={"playerId": playerId},
+                              AttributeUpdates={
+                                  "money": {"Value": money - cost,
+                                            "Action": "PUT"}})
+
+    response["Update"] = "Success";
 
     return json.dumps(response)
 

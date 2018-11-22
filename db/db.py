@@ -56,7 +56,7 @@ def getAllMonsters():
 def getPlayerByID(id):
     response = players.get_item(Key={"playerId": id})
 
-    return playerJsonToDict(response["Item"])
+    return playerJsonToDict([response["Item"]])
 
 
 def getPlayersMonsters(masterId):
@@ -68,4 +68,4 @@ def getPlayersMonsters(masterId):
 def getMonsterByID(id, masterId):
     response = owned_monsters.get_item(Key={"masterId": masterId, "monsterId": id})
 
-    return mysfitJsonToDict(response["Item"])
+    return mysfitJsonToDict([response["Item"]])
