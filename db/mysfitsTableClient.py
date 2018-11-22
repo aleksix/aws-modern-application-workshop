@@ -3,6 +3,8 @@ import json
 import logging
 from collections import defaultdict
 from db.db_write import add_monster, add_player
+import db.db
+from datetime import datetime
 
 # create a DynamoDB client using boto3. The boto3 library will automatically
 # use the credentials associated with our ECS task role to communicate with
@@ -143,10 +145,44 @@ def adoptMysfit(mysfitId, playerId):
     return json.dumps(response)
 
 
+# Create or update the player data
 def confirmPlayer(playerId):
     add_player(playerId)
 
     response = {}
+    response["Update"] = "Success";
+
+    return json.dumps(response)
+
+
+# Save data from the player's game
+def save(playerId, money, monsterData):
+    db.db.players.update_item(Key={"playerId": playerId},
+                        AttributeUpdates={
+                            "lastLogin": {"Value": datetime.utcnow().isoformat(),
+                                          "Action": "PUT"},
+                            "money": {"Value": int(money),
+                                      "Action": "PUT"}})
+
+    for monster in monsterData:
+        db.db.owned_monsters.update_item(Key={"masterId": playerId, "monsterId": monster["monsterId"]},
+                                   AttributeUpdates={
+                                       "food": {"Value": monster["food"],
+                                                "Action": "PUT"},
+                                       "entertainment": {"Value": monster["entertainment"],
+                                                         "Action": "PUT"},
+                                       "level": {"Value": monster["level"],
+                                                 "Action": "PUT"}})
+
+    response = {}
+    response["Update"] = "Success";
+
+    return json.dumps(response)
+
+
+def retrieve(playerId):
+    response = {}
+
     response["Update"] = "Success";
 
     return json.dumps(response)

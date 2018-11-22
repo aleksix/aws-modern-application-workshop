@@ -70,6 +70,7 @@ def adoptMysfit(mysfitId):
     return flaskResponse
 
 
+# Create an entry for the player
 @app.route("/mysfits/confirm", methods=['POST'])
 def confirmPlayer():
     playerId = request.get_json(silent=True)["playerId"]
@@ -81,7 +82,48 @@ def confirmPlayer():
 
     return flaskResponse
 
+
+# Save the data for the player's game
+@app.route("/mysfits/save")
+def save():
+    json_body = request.get_json(silent=True)
+    playerId = json_body["playerId"]
+    money = json_body["money"]
+    monsterData = json_body["monsters"]
+
+    serviceResponse = mysfitsTableClient.save(playerId, money, monsterData)
+
+    flaskResponse = Response(serviceResponse)
+    flaskResponse.headers["Content-Type"] = "application/json"
+
+    return flaskResponse
+
+
+# Get the data for the game
+@app.route("/mysfits/retrieve")
+def retrieve():
+    json_body = request.get_json(silent=True)
+    playerId = json_body["playerId"]
+
+    serviceResponse = mysfitsTableClient.retrieve(playerId)
+
+    flaskResponse = Response(serviceResponse)
+    flaskResponse.headers["Content-Type"] = "application/json"
+
+    return flaskResponse
+
+
 # Run the service on the local server it has been deployed to,
 # listening on port 8080.
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
+
+# TODO : Save and retrieve player data
+# Save - gets data from POST body and updates lastLogin with current server time
+# Retrieve - returns a json with player id? lastLogin and data on all owned monsters
+
+# TODO: Add cost to adoption
+# Cost will be passed in the POST body
+# If the player has the money, deduct and adopt
+# If can't adopt (already has one), return error
+# If can't adopt (no money to buy), return error
