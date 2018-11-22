@@ -14,15 +14,15 @@
       "AttributeType": "S"
     },
     {
-      "AttributeName": "health",
-      "AttributeType": "N"
-    },
-    {
       "AttributeName": "food",
       "AttributeType": "N"
     },
     {
       "AttributeName": "entertainment",
+      "AttributeType": "N"
+    },
+    {
+      "AttributeName": "level",
       "AttributeType": "N"
     }
   ],

@@ -1,8 +1,6 @@
 from collections import defaultdict
-from boto3.dynamodb.conditions import Key, Attr
+from boto3.dynamodb.conditions import Key
 import boto3
-
-client = boto3.client("dynamodb")
 
 dynamodb = boto3.resource("dynamodb")
 
@@ -14,11 +12,12 @@ def playerJsonToDict(items):
     ret = defaultdict(list)
 
     for item in items:
-        player = {}
+        player = dict()
 
-        player["playerId"] = item["playerId"]["N"]
+        player["playerId"] = item["playerId"]["S"]
         player["money"] = item["money"]["N"]
-        player["monsters"] = item["monsters"]["NS"]
+        player["ownedMonsters"] = item["ownedMonsters"]["L"]
+        player["lastLogin"] = item["lastLogin"]["S"]
 
         ret["players"].append(player)
 
@@ -29,13 +28,13 @@ def mysfitJsonToDict(items):
     ret = defaultdict(list)
 
     for item in items:
-        mysfit = {}
+        mysfit = dict()
 
-        mysfit["monsterId"] = mysfit["monsterId"]["N"]
-        mysfit["masterId"] = mysfit["masterId"]["N"]
-        mysfit["health"] = mysfit["health"]["N"]
-        mysfit["food"] = mysfit["food"]["N"]
-        mysfit["entertainment"] = mysfit["entertainment"]["N"]
+        mysfit["monsterId"] = item["monsterId"]["S"]
+        mysfit["masterId"] = item["masterId"]["S"]
+        mysfit["food"] = item["food"]["N"]
+        mysfit["entertainment"] = item["entertainment"]["N"]
+        mysfit["level"] = item["level"]["N"]
 
         ret["monsters"].append(mysfit)
 
@@ -70,8 +69,3 @@ def getMonsterByID(id, masterId):
     response = owned_monsters.get_item(Key={"masterId": masterId, "monsterId": id})
 
     return mysfitJsonToDict(response["Item"])
-
-
-if __name__ == "__main__":
-    # Testing code
-    pass

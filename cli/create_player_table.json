@@ -12,6 +12,10 @@
     {
       "AttributeName": "money",
       "AttributeType": "N"
+    },
+    {
+      "AttributeName": "lastLogin",
+      "AttributeType": "S"
     }
   ],
   "KeySchema": [
