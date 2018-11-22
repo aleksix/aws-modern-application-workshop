@@ -106,19 +106,6 @@ function save_timer(){
 	setTimeout(save_timer, 300*1000);
 }
 
- $.ajax({
-        url : mysfitsApi,
-        type : 'GET',
-        success : function(response) {
-          callback(response);
-        },
-        error : function(response) {
-          console.log("could not retrieve mysfits list.");
-          if (response.status == "401") {
-             refreshAWSCredentials();
-           }
-        }
-      });
 
 function post(){
 
