@@ -158,21 +158,21 @@ def confirmPlayer(playerId):
 # Save data from the player's game
 def save(playerId, money, monsterData):
     db.db.players.update_item(Key={"playerId": playerId},
-                        AttributeUpdates={
-                            "lastLogin": {"Value": datetime.utcnow().isoformat(),
-                                          "Action": "PUT"},
-                            "money": {"Value": int(money),
-                                      "Action": "PUT"}})
+                              AttributeUpdates={
+                                  "lastLogin": {"Value": datetime.utcnow().isoformat(),
+                                                "Action": "PUT"},
+                                  "money": {"Value": int(money),
+                                            "Action": "PUT"}})
 
     for monster in monsterData:
         db.db.owned_monsters.update_item(Key={"masterId": playerId, "monsterId": monster["monsterId"]},
-                                   AttributeUpdates={
-                                       "food": {"Value": monster["food"],
-                                                "Action": "PUT"},
-                                       "entertainment": {"Value": monster["entertainment"],
-                                                         "Action": "PUT"},
-                                       "level": {"Value": monster["level"],
-                                                 "Action": "PUT"}})
+                                         AttributeUpdates={
+                                             "food": {"Value": monster["food"],
+                                                      "Action": "PUT"},
+                                             "entertainment": {"Value": monster["entertainment"],
+                                                               "Action": "PUT"},
+                                             "level": {"Value": monster["level"],
+                                                       "Action": "PUT"}})
 
     response = {}
     response["Update"] = "Success";
@@ -182,6 +182,22 @@ def save(playerId, money, monsterData):
 
 def retrieve(playerId):
     response = {}
+
+    player = db.db.getPlayerByID(playerId)["players"][0]
+
+    # We don't need to send the owned monsters or the ID
+    del player["ownedMonsters"]
+    del player["playerId"]
+
+    response["player"] = player
+
+    monsters = db.db.getPlayersMonsters(playerId)["monsters"]
+
+    for c in range(len(monsters)):
+        del monsters[c]["monsterId"]
+        del monsters[c]["masterId"]
+
+    response["monsters"] = monsters
 
     response["Update"] = "Success";
 
