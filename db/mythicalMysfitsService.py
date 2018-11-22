@@ -71,7 +71,7 @@ def adoptMysfit(mysfitId):
 
 
 @app.route("/mysfits/confirm", methods=['POST'])
-def confirmPlayer(playerId):
+def confirmPlayer():
     playerId = request.get_json(silent=True)["playerId"]
 
     serviceResponse = mysfitsTableClient.confirm(playerId)
