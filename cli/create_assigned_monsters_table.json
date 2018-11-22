@@ -12,18 +12,6 @@
     {
       "AttributeName": "masterId",
       "AttributeType": "S"
-    },
-    {
-      "AttributeName": "food",
-      "AttributeType": "N"
-    },
-    {
-      "AttributeName": "entertainment",
-      "AttributeType": "N"
-    },
-    {
-      "AttributeName": "level",
-      "AttributeType": "N"
     }
   ],
   "KeySchema": [

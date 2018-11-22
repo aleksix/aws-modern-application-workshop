@@ -8,14 +8,6 @@
     {
       "AttributeName": "playerId",
       "AttributeType": "S"
-    },
-    {
-      "AttributeName": "money",
-      "AttributeType": "N"
-    },
-    {
-      "AttributeName": "lastLogin",
-      "AttributeType": "S"
     }
   ],
   "KeySchema": [
