@@ -20,7 +20,7 @@
   ],
   "KeySchema": [
     {
-      "AttributeName": "PlayerId",
+      "AttributeName": "playerId",
       "KeyType": "HASH"
     }
   ]

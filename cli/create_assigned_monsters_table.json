@@ -28,11 +28,11 @@
   ],
   "KeySchema": [
     {
-      "AttributeName": "MasterId",
+      "AttributeName": "masterId",
       "KeyType": "HASH"
     },
     {
-      "AttributeName": "MonsterId",
+      "AttributeName": "monsterId",
       "KeyType": "RANGE"
     }
   ]
